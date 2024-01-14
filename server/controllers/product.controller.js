@@ -1,11 +1,18 @@
 import MODELS from '../config/db.config.js';
 
 const Product = MODELS.Product;
+const Category = MODELS.Category;
 
 const findbyId = async (req, res) => {
     let { Id } = req.params;
 
-    await Product.findByPk(Id).then(async (data) => {
+    await Product.findByPk(Id,
+        {
+            include: [
+                { model: Category, as: "category" }
+            ]
+        }
+    ).then(async (data) => {
         res.json({ status: 200, message: "Success", data: data });
     }).catch(async (error) => {
         res.json({ 'status': 400, 'message': error.message });
@@ -13,9 +20,9 @@ const findbyId = async (req, res) => {
 }
 
 const insert = async (req, res) => {
-    let { title, description, version } = req.body
+    let { title, price, categoryid, property, status } = req.body
 
-    await Product.create({ title: title, description: description, version: version }).then(async (data) => {
+    await Product.create({ title: title, price: price, categoryId: categoryid, property: property, status: status }).then(async (data) => {
         res.json({ status: 200, message: "Success", data: data });
     }).catch(async (error) => {
         res.json({ 'status': 400, 'message': error.message });
@@ -27,7 +34,7 @@ const patch = async (req, res) => {
 
 
     const { Id } = req.params;
-    const { title, description, version, status } = req.body; // Specify the columns you want to update
+    const { title, categoryid, price, property, status } = req.body; // Specify the columns you want to update
 
     try {
         let product = await Product.findByPk(Id);
@@ -37,10 +44,11 @@ const patch = async (req, res) => {
             return res.status(404).json({ error: 'product not found' });
         }
 
-        if (title) user.title = title;
-        if (description) user.description = description;
-        if (version) user.version = version;
-        if (status) user.status = status;
+        if (title) product.title = title;
+        if (categoryid) product.categoryId = categoryid;
+        if (price) product.price = price;
+        if (property) product.property = property;
+        if (status) product.status = status;
 
         let patchedProduct = await product.save();
         res.json({ status: 200, message: "Success", data: patchedProduct });
@@ -63,7 +71,13 @@ const remove = async (req, res) => {
 
 const filter = async (req, res) => {
 
-    await Product.findAll().then(async (data) => {
+    await Product.findAll(
+        {
+            include: [
+                { model: Category, as: "category" }
+            ]
+        }
+    ).then(async (data) => {
 
         res.json({ status: 200, message: "Success", data: data });
     }).catch(async (error) => {

@@ -1,19 +1,11 @@
 import express from 'express';
-const router = express.Router();
+const indexRoutes = express.Router();
 
 
 import productRoutes from './product.route.js';
-import subscriptionRoutes from './subscription.route.js';
+import categoryRoutes from './category.route.js';
 
+indexRoutes.use('/products', productRoutes);
+indexRoutes.use('/categories', categoryRoutes);
 
-
-/** GET /health-check - Check service health */
-router.get('/health-check', (req, res) =>
-  res.send('OK')
-);
-
-
-router.use('/products', productRoutes);
-router.use('/subscriptions', subscriptionRoutes);
-
-export default router;
+export default indexRoutes;

@@ -1,11 +1,11 @@
 import MODELS from '../config/db.config.js';
 
-const Subscription = MODELS.Subscription;
+const Category = MODELS.Category;
 
 const findbyId = async (req, res) => {
     let { Id } = req.params;
 
-    await Subscription.findByPk(Id).then(async (data) => {
+    await Category.findByPk(Id).then(async (data) => {
         res.json({ status: 200, message: "Success", data: data });
     }).catch(async (error) => {
         res.json({ 'status': 400, 'message': error.message });
@@ -14,9 +14,9 @@ const findbyId = async (req, res) => {
 
 const insert = async (req, res) => {
 
-    let { orgid, clientid, startdate, expirydate, productid, status, description } = req.body;
+    let { title, property, status } = req.body;
 
-    await Subscription.create({ orgid: orgid, clientid: clientid, startdate: startdate, expirydate: expirydate, productid: productid, status: status, description: description }).then(async (data) => {
+    await Category.create({ title: title, property: property, status: status }).then(async (data) => {
         res.json({ status: 200, message: "Success", data: data });
     }).catch(async (error) => {
         res.json({ 'status': 400, 'message': error.message });
@@ -25,27 +25,23 @@ const insert = async (req, res) => {
 
 const patch = async (req, res) => {
     let { Id } = req.params;
-    let { orgid, clientid, startdate, expirydate, productid, status, description } = req.body;
+    let { title, property, status } = req.body;
 
     try {
-        let subscription = await Subscription.findByPk(Id);
+        let category = await Category.findByPk(Id);
   
-        if (!subscription) {
+        if (!category) {
           console.log('subscription not found' );
           return res.status(404).json({ error: 'subscription not found' });
         }
     
-        if (orgid) subscription.orgid = orgid;
-        if (clientid) subscription.clientid = clientid;
-        if (startdate) subscription.startdate = startdate;
-        if (expirydate) subscription.expirydate = expirydate;
-        if (productid) subscription.productid = productid;
-        if (status) subscription.status = status;
-        if (description) subscription.description = description;
+        if (title) category.title = title;
+        if (property) category.property = property;
+        if (status) category.status = status;
        
     
-        let patchedsubscription = await subscription.save();
-        res.json({ status: 200, message: "Success", data: patchedsubscription });
+        let patchedCategory = await category.save();
+        res.json({ status: 200, message: "Success", data: patchedCategory });
       }
       catch (error) {
           console.log('error =>', error);
@@ -56,7 +52,7 @@ const remove = async (req, res) => {
     let { Id } = req.params;  
 
 
-    await Subscription.update({ status: "deleted" }, { where: { id: Id } }).then(async (data) => {
+    await Category.update({ status: "deleted" }, { where: { id: Id } }).then(async (data) => {
         res.json({ status: 200, message: "Success", data: data });
     }).catch(async (error) => {
         res.json({ 'status': 400, 'message': error.message });
@@ -65,7 +61,7 @@ const remove = async (req, res) => {
 
 const filter = async (req, res) => {
 
-    await Subscription.findAll().then(async data => {
+    await Category.findAll().then(async data => {
         res.json({ status: 200, message: "Success", data: data });
     }).catch(async (error) => {
         res.json({ 'status': 400, 'message': error.message });

@@ -8,21 +8,32 @@ const productModel = (Interface, Sequelize) => {
         title: {
             type: Sequelize.STRING
         },
+        categoryId: {
+            type: Sequelize.UUID,
+            references: {
+                model: 'categories',
+                key: 'id'
+            }
+        },
+        price: {
+            type: Sequelize.BIGINT
+        },
+        property: {
+            type: Sequelize.JSON
+        },
         status: {
             type: Sequelize.STRING,
             defaultValue: 'active'
-        },
-        description: {
-            type: Sequelize.TEXT
-        },
-        version: {
-            type: Sequelize.STRING
-        },
+        }
     });
 
-    Product.associate = (models) => {
-        Product.hasMany(models.Subscription, { onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-    };
+    Product.associate = function(models) {
+        Product.belongsTo(models.Category, {
+          foreignKey: 'categoryId',
+          as: 'category',
+          onDelete: 'CASCADE',
+        });
+    }
 
     return Product;
 };

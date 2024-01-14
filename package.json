@@ -6,7 +6,7 @@
   "author": "Paras Poshiya",
   "scripts": {
     "dev": "nodemon -r dotenv/config serverstart.js",
-    "prod": "node serverstart.js"
+    "prod": "node -r dotenv/config serverstart.js"
   },
   "type": "module",
   "dependencies": {

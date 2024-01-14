@@ -4,10 +4,10 @@ import path from 'path';
 import cors from 'cors';
 import compression from 'compression';
 import MODELS, { PGDB } from './server/config/db.config.js';
-import routes from './server/routes/index.route.js'
+import indexRoutes from './server/routes/index.route.js'
 
-import dotenv from 'dotenv';
-dotenv.config();
+// import dotenv from 'dotenv';
+// dotenv.config();
 
 const { PORT, NODE_ENV, PQSQLDATABASE } = process.env;
 
@@ -15,6 +15,13 @@ const app = express();
 const _dirname = path.resolve();
 
 app.use(function (req, res, next) {
+
+    let url = req.originalUrl.toString().trim();
+    let method = req.method.toString().trim();
+    console.log('-----------------------------------------');
+    console.log("url", method, "--", url); // API show in Command Prompt
+
+
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
@@ -28,9 +35,9 @@ app.use(bodyParser.json({ limit: '11mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '11mb' }));
 app.use(cors());
 
-app.use('/api/', routes);
+app.use('/api/', indexRoutes);
 
-PGDB.sync({ force: true }).then(() => {
+PGDB.sync().then(() => {
     console.log(`'${PQSQLDATABASE}' Database Connection has been established successfully.`);
     app.listen(PORT, () => {
         console.info(`Server listening on port ${PORT} - (${NODE_ENV})`);
